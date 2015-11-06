@@ -152,7 +152,7 @@ var sArena =
 		}
 		else if(keycode == 115)// F4 fullscreen on/off
 		{
-			core.Fullscreen();
+			core.fullscreen();
 		}
 	},
 	
