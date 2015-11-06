@@ -2,8 +2,8 @@
  * Copyright (c) 2015 Mateusz Muszyński
  * All Rights Reserved.
  */
- 
-var sLoad = 
+
+var sLoad =
 {
 	init: function()
 	{
@@ -15,15 +15,18 @@ var sLoad =
 
 		assets.downloadAll( () => core.setState(sArena) );
 	},
-	
+
 	update: function(time) { },
-	
+
 	draw: function() //TODO Add some nice looking loading bar
 	{
 		/*core.ctx.font = '40pt Calibri';
 		core.ctx.fillStyle = 'blue';
 		core.ctx.fillText('Loading!', 140, 100);*/
 	}
+
+	click: function() { },
+	keyPress: function() { }
 }
 
 var sArena =
@@ -32,77 +35,72 @@ var sArena =
 	hero: 0,
 	path: [],
 	pathptr: 0,
-	pos: [0,0],
-	last: [0,0],
-	
+	pos: [0, 0], // Camera position
+
 	init: function()
 	{
 		this.sprites[0] = assets.getAsset('assets/background.png');
 		this.sprites[1] = assets.getAsset('assets/hero.png');
 		this.sprites[2] = assets.getAsset('assets/cursor.png');
-		this.map.data	= assets.getAsset("assets/map.json");
+		this.map.data	= assets.getAsset('assets/map.json');
 
-		//assets.getAsset("bg.ogg").play();
-		
-		this.hero = new hero("Hero1", 13, 10);
-		this.map.objects.heroes.push(this.hero);
-		//this.map.objects.heroes.push(new hero("Hero2", 15, 12));
-		//this.map.objects.heroes.push(new hero("Hero3", 18, 14));
+		this.hero = new hero('Hero1', 13, 10);
+		this.map.objects.heroes.push(this.hero); // Add our hero to map objects
 	},
-	
+
 	update: function(time)
 	{
 		if(input.mouseX < 20 && this.pos[0] > 0)
 			this.pos[0] -= (time * 0.2);
-		if(input.mouseX > core.can.width-20 && this.pos[0] < 64*32 - core.can.width-20)
+
+		if(input.mouseX > (core.can.width - 20) && this.pos[0] < 64 * 32 - core.can.width - 20)
 			this.pos[0] += (time * 0.2);
-			
+
 		if(input.mouseY < 20 && this.pos[1] > 0)
 			this.pos[1] -= (time * 0.2);
-		if(input.mouseY > core.can.height-20 && this.pos[1] < 64*32 - core.can.height-20)
+
+		if(input.mouseY > (core.can.height - 20) && this.pos[1] < 64 * 32 - core.can.height - 20)
 			this.pos[1] += (time * 0.2);
-		
-		if(this.inMove == 1)	
+
+		if(this.inMove == 1)
 		{
 			var x = this.path[this.pathptr + 1].x - this.hero.posX;
 			var y = this.path[this.pathptr + 1].y - this.hero.posY;
-			//log(x+" "+y);
 			this.move(x, y, time);
 		}
-		
+
 		for(var i = 0; i < this.map.objects.heroes.length; i++)
 			this.map.objects.heroes[i].update(time);
-		
+
 	},
-	
+
 	draw: function()
 	{
 		core.ctx.clearRect(0, 0, core.can.width, core.can.height);
-		var p = [this.pos[0]|0, this.pos[1]|0];
+
+		var p = [this.pos[0] | 0, this.pos[1] | 0];
 		this.map.drawMap(p[0], p[1]);
-		
+
 		if(this.path.length > 0)
-			core.drawImage(this.sprites[2], 0, 60, this.path[this.path.length - 1].x * 32- p[0], this.path[this.path.length - 1].y * 32 - p[1], 20,20);
-		
+			core.drawImage(this.sprites[2], 0, 60, this.path[this.path.length - 1].x * 32- p[0], this.path[this.path.length - 1].y * 32 - p[1], 20, 20);
+
 		this.map.drawHeroes(p[0], p[1]);
-		core.ctx.drawImage(this.sprites[2], 0, 0, 20, 20, input.mouseX, input.mouseY, 20,20);
+		core.ctx.drawImage(this.sprites[2], 0, 0, 20, 20, input.mouseX, input.mouseY, 20, 20);
 	},
-	
+
 	click: function()
 	{
 		if(this.inMove != 1)
 		{
-			var x = ((input.mouseX + this.pos[0]) / 32) + 0.5 |0;
-			var y = ((input.mouseY + this.pos[1]) / 32) + 0.5 |0;
+			// TODO move hero movement code to hero prototype 
+			var x = ((input.mouseX + this.pos[0]) / 32) + 0.5 | 0;
+			var y = ((input.mouseY + this.pos[1]) / 32) + 0.5 | 0;
 
 			if(this.map.data.layers[2].data[x + (y * this.map.data.height)] == 0)
 			{
 				var start = [this.hero.posX, this.hero.posY];
 				var destination = [x, y];
 				this.path = a_star(start, destination, this.map.data.layers[2].data, this.map.data.height, this.map.data.width, true);
-			
-				this.last[0] = x;
-				this.last[1] = y;
 				this.inMove = 1;
 				this.hero.status = 1;
 			}
@@ -112,9 +110,9 @@ var sArena =
 			}
 		}
 	},
-	
+
 	consoleVisible: 0,
-	
+
 	keyPress: function(keycode)
 	{
 		if(keycode == 82) // "r" center camera at player coords
@@ -124,14 +122,14 @@ var sArena =
 		}
 		else if(keycode == 192) // "`" show/hide console
 		{
-			var cinput = $("cinput");
+			var cinput = $('cinput');
 			if(this.consoleVisible == 0)
 			{
-				$("console").style.visibility = "visible";
+				$('console').style.visibility = 'visible';
 				cinput.focus();
-				cinput.value = "";
+				cinput.value = '';
 				this.consoleVisible = 1;
-				
+
 				cinput.onkeyup = function(e)
 				{
 					if(e.keyCode == 13)
@@ -144,7 +142,7 @@ var sArena =
 			}
 			else
 			{
-				$("console").style.visibility = "hidden";
+				$('console').style.visibility = 'hidden';
 				cinput.blur();
 				cinput.onkeyup = null;
 				this.consoleVisible = 0;
@@ -155,29 +153,29 @@ var sArena =
 			core.fullscreen();
 		}
 	},
-	
+
 	inMove: 0,
 	cnt: 0,
-	
+
 	move: function(x, y, time)
 	{
 		time *= 0.1;
 		this.inMove = 1;
 		this.hero.realX += x * time;
 		this.hero.realY += y * time;
-		
+
 		if(this.cnt == 0)
 			this.hero.rotate(x, y);
-		
+
 		this.cnt += 1 * time;
-		
+
 		if(this.cnt >= 32)
 		{
 			this.hero.posX = this.hero.realX / 32 | 0;
 			this.hero.posY = this.hero.realY / 32 | 0;
 			if(x < 0) this.hero.posX++;
 			if(y < 0) this.hero.posY++;
-	
+
 			this.hero.realX = this.hero.posX * 32;
 			this.hero.realY = this.hero.posY * 32;
 			this.pathptr++;
@@ -191,8 +189,8 @@ var sArena =
 			this.hero.status = 0;
 		}
 	},
-	
-	map: 
+
+	map:
 	{
 		data: 0,
 		objects: { heroes:[] },
@@ -203,7 +201,7 @@ var sArena =
 			var starty  = Math.max((y / 32 - 0.5) | 0, 0);
 			var finishx = Math.min((x + core.can.width) / 32 + 1.5 | 0, this.data.width);
 			var finishy = Math.min((y + core.can.height) / 32 + 1.5 | 0, this.data.height);
-		
+
 			for(var ix = startx; ix < finishx; ix++)
 			{
 				for(var iy = starty; iy < finishy; iy++)
@@ -220,7 +218,7 @@ var sArena =
 				}
 			}
 		},
-		
+
 		drawHeroes: function(x, y)
 		{
 			for(var i = 0; i < this.objects.heroes.length; i++)
@@ -237,7 +235,7 @@ var sArena =
 			var x = (idx % perRow) | 0;
 			var y = (idx / perRow) | 0;
 
-			return [x * this.data.tilewidth, y * this.data.tileheight];        
+			return [x * this.data.tilewidth, y * this.data.tileheight];
 		}
 	}
 };

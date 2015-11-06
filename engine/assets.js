@@ -3,36 +3,36 @@
  * All Rights Reserved.
  */
 
-var assets = 
+var assets =
 {
 	successCount: 0,
 	errorCount:  0,
 	cache:  {},
 	downloadQueue: [],
-	
-	queueImage: function(filepath) { assets.downloadQueue.push({type: "img",   path: filepath}); },
-	queueAudio: function(filepath) { assets.downloadQueue.push({type: "audio", path: filepath}); },
-	queueJSON:  function(filepath) { assets.downloadQueue.push({type: "json",  path: filepath}); },
-	
+
+	queueImage: function(filepath) { assets.downloadQueue.push( { type: "img",   path: filepath } ); },
+	queueAudio: function(filepath) { assets.downloadQueue.push( { type: "audio", path: filepath } ); },
+	queueJSON:  function(filepath) { assets.downloadQueue.push( { type: "json",  path: filepath } ); },
+
 	callback: function(){},
-	
+
 	_success: function()
 	{
 		assets.successCount++;
 		if(assets.isDone()) assets.callback();
 	},
-	
+
 	_error: function()
 	{
 		error("Cannot load some file");
 		assets.errorCount++;
 		if(assets.isDone()) assets.callback();
 	},
-	
+
 	downloadAll: function(downloadCallback)
 	{
 		assets.callback = downloadCallback;
-		
+
 		if(assets.downloadQueue.length === 0)
 			downloadCallback();
 
@@ -55,13 +55,13 @@ var assets =
 				audio.src = path;
 				assets.cache[path] = audio;
 			}
-			else//JSON
+			else // JSON
 			{
 				var req = new XMLHttpRequest();
 				req.open("GET", path, true);
 				req.overrideMimeType("application/json");
 				var that = assets;
-			
+
 				req.onreadystatechange = function()
 				{
 					if(req.readyState == 4)

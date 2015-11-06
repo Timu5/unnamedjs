@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Mateusz Muszyński
  * All Rights Reserved.
  */
- 
+
 function hero(heroname, posx, posy)
 {
 	this.uid    = 0;
@@ -11,7 +11,7 @@ function hero(heroname, posx, posy)
 	this.posY   = posy;
 	this.realX  = posx * 32;
 	this.realY  = posy * 32;
-	this.rot    = 0; // Map rotation	
+	this.rot    = 0; // Map rotation
 	this.status = 0; // 0 - idle, 1 - walk
 	this.frame  = 0; // we will use it to animate
 }
@@ -19,7 +19,7 @@ function hero(heroname, posx, posy)
 hero.prototype.rotate = function(x, y)//int value from -1 to 1
 {
 	var tmp = ((y + 1) * 3) + (x + 1) | 0;
-		
+
 	switch(tmp)
 	{
 		case 0: this.rot = 5; break;

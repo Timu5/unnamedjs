@@ -3,18 +3,18 @@
  * All Rights Reserved.
  */
 
-var input = 
+var input =
 {
 	mouseX: 0,
 	mouseY: 0,
-	
+
 	mouseState:  0,//0-mouseup, 1-mousedown
 	mouseButton: 0,//0-nothing, 1-left, 2-right, 3-left+right
 	mouseWheel:  0,
-	
+
 	keys: [],
 	//DPad: { left: 0, right: 0, up: 0, down: 0 },
-	
+
 	init: function()
 	{
 		core.can.addEventListener('mousemove', input.mousePosCallback,  false);
@@ -22,11 +22,11 @@ var input =
 		core.can.addEventListener('mouseup',   input.mouseUpCallback,   false);
 		window.addEventListener  ('keydown',   input.keyDownCallback,   true);
 		window.addEventListener  ('keyup',     input.keyUpCallback,     true);
-		
+
 		//prevent context menu
 		document.addEventListener('contextmenu', e => e.preventDefault(), false);
 	},
-	
+
 	mousePosCallback:	function(e) { input.mouseX = e.pageX - core.can.offsetLeft; input.mouseY = e.pageY - core.can.offsetTop; },
 	mouseDownCallback:	function(e) { input.mouseState = 1; },
 	mouseUpCallback:	function(e) { core.state.click(); input.mouseState = 0; },
