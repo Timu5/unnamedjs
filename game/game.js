@@ -23,7 +23,7 @@ var sLoad =
 		/*core.ctx.font = '40pt Calibri';
 		core.ctx.fillStyle = 'blue';
 		core.ctx.fillText('Loading!', 140, 100);*/
-	}
+	},
 
 	click: function() { },
 	keyPress: function() { }
@@ -62,16 +62,16 @@ var sArena =
 		if(input.mouseY > (core.can.height - 20) && this.pos[1] < 64 * 32 - core.can.height - 20)
 			this.pos[1] += (time * 0.2);
 
-		if(this.inMove == 1)
-		{
-			var x = this.path[this.pathptr + 1].x - this.hero.posX;
-			var y = this.path[this.pathptr + 1].y - this.hero.posY;
-			this.move(x, y, time);
-		}
-
 		for(var i = 0; i < this.map.objects.heroes.length; i++)
 			this.map.objects.heroes[i].update(time);
 
+		if(this.hero.status == 0 && this.path.length > this.pathptr + 1)
+		{
+			this.pathptr++;
+			var x = this.path[this.pathptr].x - this.hero.posX;
+			var y = this.path[this.pathptr].y - this.hero.posY;
+			this.hero.move(x, y);
+		}
 	},
 
 	draw: function()
@@ -90,24 +90,19 @@ var sArena =
 
 	click: function()
 	{
-		if(this.inMove != 1)
-		{
-			// TODO move hero movement code to hero prototype 
-			var x = ((input.mouseX + this.pos[0]) / 32) + 0.5 | 0;
-			var y = ((input.mouseY + this.pos[1]) / 32) + 0.5 | 0;
+		var x = ((input.mouseX + this.pos[0]) / 32) + 0.5 | 0;
+		var y = ((input.mouseY + this.pos[1]) / 32) + 0.5 | 0;
 
-			if(this.map.data.layers[2].data[x + (y * this.map.data.height)] == 0)
-			{
-				var start = [this.hero.posX, this.hero.posY];
-				var destination = [x, y];
-				this.path = a_star(start, destination, this.map.data.layers[2].data, this.map.data.height, this.map.data.width, true);
-				this.inMove = 1;
-				this.hero.status = 1;
-			}
-			else
-			{
-				this.path = [];
-			}
+		if(this.map.data.layers[2].data[x + (y * this.map.data.height)] == 0)
+		{
+			var start = [this.hero.posX, this.hero.posY];
+			var destination = [x, y];
+			this.path = a_star(start, destination, this.map.data.layers[2].data, this.map.data.height, this.map.data.width, true);
+			this.pathptr = 0;
+		}
+		else
+		{
+			this.path = [];
 		}
 	},
 
@@ -151,42 +146,6 @@ var sArena =
 		else if(keycode == 115)// F4 fullscreen on/off
 		{
 			core.fullscreen();
-		}
-	},
-
-	inMove: 0,
-	cnt: 0,
-
-	move: function(x, y, time)
-	{
-		time *= 0.1;
-		this.inMove = 1;
-		this.hero.realX += x * time;
-		this.hero.realY += y * time;
-
-		if(this.cnt == 0)
-			this.hero.rotate(x, y);
-
-		this.cnt += 1 * time;
-
-		if(this.cnt >= 32)
-		{
-			this.hero.posX = this.hero.realX / 32 | 0;
-			this.hero.posY = this.hero.realY / 32 | 0;
-			if(x < 0) this.hero.posX++;
-			if(y < 0) this.hero.posY++;
-
-			this.hero.realX = this.hero.posX * 32;
-			this.hero.realY = this.hero.posY * 32;
-			this.pathptr++;
-			this.cnt = 0;
-		}
-		if(this.pathptr >= this.path.length - 1)
-		{
-			this.path = [];
-			this.pathptr = 0;
-			this.inMove = 0;
-			this.hero.status = 0;
 		}
 	},
 
