@@ -18,11 +18,21 @@ var sLoad =
 
 	update: function(time) { },
 
-	draw: function() //TODO Add some nice looking loading bar
+	draw: function()
 	{
-		/*core.ctx.font = '40pt Calibri';
-		core.ctx.fillStyle = 'blue';
-		core.ctx.fillText('Loading!', 140, 100);*/
+		var width = 200;
+		var height = 50;
+		var tx = (canvas.width - width) / 2 | 0;
+		var ty = (canvas.height - height) / 2 | 0;
+		var val = (assets.successCount + assets.errorCount) / assets.downloadQueue.length;
+		
+		core.ctx.clearRect(0, 0, core.can.width, core.can.height);
+		
+		core.ctx.fillStyle = '#777';
+		core.ctx.fillRect(tx, ty, width, height);
+		
+		core.ctx.fillStyle = '#0F0';
+		core.ctx.fillRect(tx, ty, width * val, height);
 	},
 
 	click: function() { },

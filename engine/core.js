@@ -9,8 +9,8 @@ function $(id) { return document.getElementById(id); }
 
 function log(text)
 {
-	$("log").innerHTML += '[' + (new Date()).toTimeString().substr(0, 8) + '] ' + text + '<br>';
-	$("log").scrollTop = $("log").scrollHeight;
+	$('log').innerHTML += '[' + (new Date()).toTimeString().substr(0, 8) + '] ' + text + '<br>';
+	$('log').scrollTop = $('log').scrollHeight;
 }
 
 function error(text)
@@ -20,7 +20,7 @@ function error(text)
 
 window.onerror = function(msg, url, line)
 {
-	error(msg + "\nurl: " + url + "\nline: " + line);
+	error(msg + ' url: ' + url + ' line: ' + line);
 	return false;
 }
 
@@ -64,6 +64,7 @@ var core =
 		core.state.draw();
 		if(debug)
 		{
+			// this code draw fps counter
 			core.counter++;
 			core.frames += (1 / newtime * 1000);
 			if(core.counter > 20)
