@@ -161,17 +161,20 @@ var sArena =
 			var finishx = Math.min((x + core.can.width) / 32 + 1.5 | 0, this.data.width);
 			var finishy = Math.min((y + core.can.height) / 32 + 1.5 | 0, this.data.height);
 
+			var perRow = this.data.tilesets[0].imagewidth / this.data.tilewidth;
+			
 			for(var ix = startx; ix < finishx; ix++)
 			{
 				for(var iy = starty; iy < finishy; iy++)
 				{
 					for(var l = 0; l < 1; l++)
 					{
-						var tmp = this.data.layers[l].data[ix + (iy * this.data.height)];
-						if(tmp != 0)
+						var tmp = this.data.layers[l].data[ix + (iy * this.data.height)] - 1;
+						if(tmp >= 0)
 						{
-							var cords = this.getCoords(tmp);
-							core.drawImage(sArena.sprites[0], cords[0], cords[1], ix * 32 - x, iy * 32 - y, 32, 32);
+							var px = ((tmp % perRow) | 0) * this.data.tilewidth;
+							var py = ((tmp / perRow) | 0) * this.data.tileheight;
+							core.drawImage(sArena.sprites[0], px, py, ix * 32 - x, iy * 32 - y, 32, 32);
 						}
 					}
 				}
@@ -182,19 +185,6 @@ var sArena =
 		{
 			for(var i = 0; i < this.objects.heroes.length; i++)
 				this.objects.heroes[i].draw(x, y + 10);
-		},
-
-		getCoords: function(idx)//convert index to x,y coords
-		{
-			var idx = idx | 0;
-			idx--;
-
-			var perRow = this.data.tilesets[0].imagewidth / this.data.tilewidth;
-
-			var x = (idx % perRow) | 0;
-			var y = (idx / perRow) | 0;
-
-			return [x * this.data.tilewidth, y * this.data.tileheight];
 		}
 	}
 };
