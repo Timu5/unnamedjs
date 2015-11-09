@@ -22,8 +22,8 @@ var sLoad =
 	{
 		var width = 200;
 		var height = 50;
-		var tx = (canvas.width - width) / 2 | 0;
-		var ty = (canvas.height - height) / 2 | 0;
+		var tx = (core.can.width - width) / 2 | 0;
+		var ty = (core.can.height - height) / 2 | 0;
 		var val = (assets.successCount + assets.errorCount) / assets.downloadQueue.length;
 		
 		core.ctx.clearRect(0, 0, core.can.width, core.can.height);
@@ -54,7 +54,7 @@ var sArena =
 		this.sprites[2] = assets.getAsset('assets/cursor.png');
 		this.map.data	= assets.getAsset('assets/map.json');
 
-		this.hero = new hero('Hero1', 13, 10);
+		this.hero = new Hero('Hero1', 13, 10);
 		this.map.objects.heroes.push(this.hero); // Add our hero to map objects
 	},
 

@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-function hero(heroname, posx, posy)
+function Hero(heroname, posx, posy)
 {
 	this.uid      = 0;
 	this.name     = heroname;
@@ -18,7 +18,7 @@ function hero(heroname, posx, posy)
 	this.cnt      = 0; // helper var used in movement
 }
 
-hero.prototype.rotate = function(x, y)//int value from -1 to 1
+Hero.prototype.rotate = function(x, y)//int value from -1 to 1
 {
 	var tmp = ((y + 1) * 3) + (x + 1) | 0;
 
@@ -36,14 +36,14 @@ hero.prototype.rotate = function(x, y)//int value from -1 to 1
 	}
 }
 
-hero.prototype.move = function(x, y)
+Hero.prototype.move = function(x, y)
 {
 	this.nextMove = [x, y];
 	this.status = 1;
 	this.cnt = 0;
 }
 
-hero.prototype.update = function(time)
+Hero.prototype.update = function(time)
 {
 	if(this.status == 1)
 	{
@@ -81,7 +81,7 @@ hero.prototype.update = function(time)
 	}
 }
 
-hero.prototype.draw = function(x, y)
+Hero.prototype.draw = function(x, y)
 {
 	if(this.status == 0) core.drawImage(sArena.sprites[1], 0, this.rot * 64, this.realX - x, this.realY - y, 96, 64);
 	else                 core.drawImage(sArena.sprites[1], 96 + (this.frame | 0) * 96, this.rot * 64, this.realX - x, this.realY - y, 96,64);

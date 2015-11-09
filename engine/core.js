@@ -26,8 +26,8 @@ window.onerror = function(msg, url, line)
 
 var core =
 {
-	can: 0, // Canvas element
-	ctx: 0, // Canvas context element
+	can: null, // Canvas element
+	ctx: null, // Canvas context element
 
 	state: sLoad, // Current state
 
@@ -75,8 +75,8 @@ var core =
 			}
 			core.ctx.font = '20pt Calibri';
 			core.ctx.fillStyle = 'white';
-			core.ctx.fillText(core.fps.toString(), 00, 20);
-			core.ctx.strokeText(core.fps.toString(), 00, 20);
+			core.ctx.fillText(core.fps.toString(), 0, 20);
+			core.ctx.strokeText(core.fps.toString(), 0, 20);
 		}
 		requestAnimationFrame(core.tick);
 	},

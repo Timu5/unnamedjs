@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "commonjs"
+	},
+	"files": [
+		"engine/assets.js",
+		"engine/astar.js",
+		"engine/core.js",
+		"engine/input.js",
+		"game/game.js",
+		"game/hero.js"
+	]
+}
