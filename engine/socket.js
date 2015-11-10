@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Mateusz Muszyñski
+ * Copyright (c) 2015 Mateusz Muszyï¿½ski
  * All Rights Reserved.
  */
 
@@ -10,22 +10,22 @@ var socket =
 	
 	init: function(url)
 	{
-		websocket = new WebSocket(url);
+		socket.websocket = new WebSocket(url);
 		
-		websocket.onopen    = function(e) { socket.opened = true; };
-		websocket.onclose   = function(e) { socket.opened = false; };
-		websocket.onmessage = function(e) { log("Server message: " + e.data); };
-		websocket.onerror   = function(e) { socket.opened = false; };
+		socket.websocket.onopen    = function(e) { socket.opened = true; };
+		socket.websocket.onclose   = function(e) { socket.opened = false; };
+		socket.websocket.onmessage = function(e) { log("Server message: " + e.data); };
+		socket.websocket.onerror   = function(e) { socket.opened = false; };
 	},
 	
 	send: function(data)
 	{
-		if(opened) socket.websocket.send(data);
+		if(socket.opened) socket.websocket.send(data);
 	},
 	
 	close: function()
 	{
-		if(opened) socket.websocket.close();
+		if(socket.opened) socket.websocket.close();
 	}
 };
 
