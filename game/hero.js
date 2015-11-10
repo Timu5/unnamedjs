@@ -9,8 +9,8 @@ function Hero(heroname, posx, posy)
 	this.name     = heroname;
 	this.posX     = posx; // Grid position
 	this.posY     = posy;
-	this.realX    = posx * 32;
-	this.realY    = posy * 32;
+	this.realX    = posx * 40;
+	this.realY    = posy * 40;
 	this.rot      = 0; // Map rotation
 	this.status   = 0; // 0 - idle, 1 - walk
 	this.frame    = 0; // curent animation frame
@@ -65,15 +65,15 @@ Hero.prototype.update = function(time)
 		
 		this.cnt += 1 * time;
 
-		if(this.cnt >= 32)
+		if(this.cnt >= 40)
 		{
-			this.posX = this.realX / 32 | 0;
-			this.posY = this.realY / 32 | 0;
+			this.posX = this.realX / 40 | 0;
+			this.posY = this.realY / 40 | 0;
 			if(this.nextMove[0] < 0) this.posX++;
 			if(this.nextMove[1] < 0) this.posY++;
 
-			this.realX = this.posX * 32;
-			this.realY = this.posY * 32;
+			this.realX = this.posX * 40;
+			this.realY = this.posY * 40;
 
 			this.cnt = 0;
 			this.status = 0;
@@ -84,5 +84,5 @@ Hero.prototype.update = function(time)
 Hero.prototype.draw = function(x, y)
 {
 	if(this.status == 0) core.drawImage(sArena.sprites[1], 0, this.rot * 64, this.realX - x, this.realY - y, 96, 64);
-	else                 core.drawImage(sArena.sprites[1], 96 + (this.frame | 0) * 96, this.rot * 64, this.realX - x, this.realY - y, 96,64);
+	else                 core.drawImage(sArena.sprites[1], 96 + (this.frame | 0) * 96, this.rot * 64, this.realX - x, this.realY - y, 96, 64);
 }

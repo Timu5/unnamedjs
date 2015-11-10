@@ -7,10 +7,10 @@ body {
 	margin: 0;
 	padding: 0;
 	background-color: black;
+	cursor: url("assets/cursor2.png"), auto;
 }
 
 #canvas {
-	cursor: none;
 	z-index: 0;
 	position: absolute;
 	top: 0;
@@ -87,4 +87,15 @@ body {
 	background: green;
 	width: 50%;
 	height: 100%;
+}
+
+#uitest {
+	background-image: url("assets/ui.png");
+	background-position: 0px -80px;
+	width: 120px;
+	height: 320px;
+	z-index: 2;
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
 }
