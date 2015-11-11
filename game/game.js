@@ -36,7 +36,9 @@ var sLoad =
 	},
 
 	click: function() { },
-	keyPress: function() { }
+	keyPress: function() { },
+	
+	message: function() { }
 }
 
 var sArena =
@@ -50,56 +52,56 @@ var sArena =
 
 	init: function()
 	{
-		this.sprites[0] = assets.getAsset('assets/wild.png');
-		this.sprites[1] = assets.getAsset('assets/hero.png');
-		this.sprites[2] = assets.getAsset('assets/cursor.png');
-		this.map.data	= assets.getAsset('assets/map.json');
+		sArena.sprites[0] = assets.getAsset('assets/wild.png');
+		sArena.sprites[1] = assets.getAsset('assets/hero.png');
+		sArena.sprites[2] = assets.getAsset('assets/cursor.png');
+		sArena.map.data	= assets.getAsset('assets/map.json');
 
-		this.hero = new Hero('Hero1', 20, 10);
-		this.map.objects.heroes.push(this.hero); // Add our hero to map objects
+		sArena.hero = new Hero('Hero1', 20, 10);
+		sArena.map.objects.heroes.push(sArena.hero); // Add our hero to map objects
 	},
 
 	update: function(time)
 	{
-		if(input.mouseX < 20 && this.pos[0] > 0)
+		if(input.mouseX < 20 && sArena.pos[0] > - core.can.width / 2)
 		{
-			this.pos[0] -= (time * 0.2);
-			this.lock = false;
+			sArena.pos[0] -= (time * 0.2);
+			sArena.lock = false;
 		}
 		
-		if(input.mouseX > (core.can.width - 20) && this.pos[0] < (this.map.data.width * this.map.data.tilewidth) - core.can.width - 20)
+		if(input.mouseX > (core.can.width - 20) && sArena.pos[0] < (sArena.map.data['width'] * sArena.map.data['tilewidth']) - core.can.width / 2)
 		{
-			this.pos[0] += (time * 0.2);
-			this.lock = false;
+			sArena.pos[0] += (time * 0.2);
+			sArena.lock = false;
 		}
 
-		if(input.mouseY < 20 && this.pos[1] > 0)
+		if(input.mouseY < 20 && sArena.pos[1] > - core.can.height / 2)
 		{
-			this.pos[1] -= (time * 0.2);
-			this.lock = false;
+			sArena.pos[1] -= (time * 0.2);
+			sArena.lock = false;
 		}
 
-		if(input.mouseY > (core.can.height - 20) && this.pos[1] < (this.map.data.height * this.map.data.height) - core.can.height - 20)
+		if(input.mouseY > (core.can.height - 20) && sArena.pos[1] < (sArena.map.data['height'] * sArena.map.data['height']) - core.can.height / 2)
 		{
-			this.pos[1] += (time * 0.2);
-			this.lock = false;
+			sArena.pos[1] += (time * 0.2);
+			sArena.lock = false;
 		}
 
-		if(this.lock)
+		if(sArena.lock)
 		{
-			this.pos[0] = this.hero.realX - core.can.width / 2;
-			this.pos[1] = this.hero.realY - core.can.height / 2;
+			sArena.pos[0] = sArena.hero.realX - core.can.width / 2;
+			sArena.pos[1] = sArena.hero.realY - core.can.height / 2;
 		}
 
-		for(var i = 0; i < this.map.objects.heroes.length; i++)
-			this.map.objects.heroes[i].update(time);
+		for(var i = 0; i < sArena.map.objects.heroes.length; i++)
+			sArena.map.objects.heroes[i].update(time);
 
-		if(this.hero.status == 0 && this.path.length > this.pathptr + 1)
+		if(sArena.hero.status == 0 && sArena.path.length > sArena.pathptr + 1)
 		{
-			this.pathptr++;
-			var x = this.path[this.pathptr].x - this.hero.posX;
-			var y = this.path[this.pathptr].y - this.hero.posY;
-			this.hero.move(x, y);
+			sArena.pathptr++;
+			var x = sArena.path[sArena.pathptr].x - sArena.hero.posX;
+			var y = sArena.path[sArena.pathptr].y - sArena.hero.posY;
+			sArena.hero.move(x, y);
 		}
 	},
 
@@ -107,30 +109,30 @@ var sArena =
 	{
 		core.ctx.clearRect(0, 0, core.can.width, core.can.height);
 
-		var p = [this.pos[0] | 0, this.pos[1] | 0];
-		this.map.drawMap(p[0], p[1]);
+		var p = [sArena.pos[0] | 0, sArena.pos[1] | 0];
+		sArena.map.drawMap(p[0], p[1]);
 
-		if(this.path.length > 0)
-			core.drawImage(this.sprites[2], 0, 60, this.path[this.path.length - 1].x * 40 - p[0], this.path[this.path.length - 1].y * 40 - p[1], 20, 20);
+		if(sArena.path.length > 0)
+			core.drawImage(sArena.sprites[2], 0, 60, sArena.path[sArena.path.length - 1].x * 40 - p[0], sArena.path[sArena.path.length - 1].y * 40 - p[1], 20, 20);
 
-		this.map.drawHeroes(p[0], p[1]);
+		sArena.map.drawHeroes(p[0], p[1]);
 	},
 
 	click: function()
 	{
-		var x = ((input.mouseX + this.pos[0]) / 40) + 0.5 | 0;
-		var y = ((input.mouseY + this.pos[1]) / 40) + 0.5 | 0;
+		var x = ((input.mouseX + sArena.pos[0]) / 40) + 0.5 | 0;
+		var y = ((input.mouseY + sArena.pos[1]) / 40) + 0.5 | 0;
 
-		if(this.map.data.layers[1].data[x + (y * this.map.data.height)] == 0)
+		if(sArena.map.data['layers'][1]['data'][x + (y * sArena.map.data['height'])] == 0)
 		{
-			var start = [this.hero.posX, this.hero.posY];
+			var start = [sArena.hero.posX, sArena.hero.posY];
 			var destination = [x, y];
-			this.path = a_star(start, destination, this.map.data.layers[1].data, this.map.data.height, this.map.data.width, true);
-			this.pathptr = 0;
+			sArena.path = a_star(start, destination, sArena.map.data['layers'][1]['data'], sArena.map.data['height'], sArena.map.data['width'], true);
+			sArena.pathptr = 0;
 		}
 		else
 		{
-			this.path = [];
+			sArena.path = [];
 		}
 	},
 
@@ -140,23 +142,22 @@ var sArena =
 	{
 		if(keycode == 82) // "r" center camera at player coords
 		{
-			this.lock = true;
+			sArena.lock = true;
 		}
 		else if(keycode == 192) // "`" show/hide console
 		{
 			var cinput = $('cinput');
-			if(this.consoleVisible == 0)
+			if(sArena.consoleVisible == 0)
 			{
 				$('console').style.visibility = 'visible';
 				cinput.focus();
 				cinput.value = '';
-				this.consoleVisible = 1;
+				sArena.consoleVisible = 1;
 
 				cinput.onkeyup = function(e)
 				{
 					if(e.keyCode == 13)
 					{
-						//log(cinput.value);
 						eval(cinput.value);
 						cinput.value = "";
 					}
@@ -167,13 +168,18 @@ var sArena =
 				$('console').style.visibility = 'hidden';
 				cinput.blur();
 				cinput.onkeyup = null;
-				this.consoleVisible = 0;
+				sArena.consoleVisible = 0;
 			}
 		}
 		else if(keycode == 115)// F4 fullscreen on/off
 		{
 			core.fullscreen();
 		}
+	},
+
+	message: function(e)
+	{
+		log("Server message: " + e.data);
 	},
 
 	map:
@@ -185,10 +191,10 @@ var sArena =
 		{
 			var startx  = Math.max((x / 40 - 0.5) | 0, 0);
 			var starty  = Math.max((y / 40 - 0.5) | 0, 0);
-			var finishx = Math.min((x + core.can.width) / 40 + 1.5 | 0, this.data.width);
-			var finishy = Math.min((y + core.can.height) / 40 + 1.5 | 0, this.data.height);
+			var finishx = Math.min((x + core.can.width) / 40 + 1.5 | 0, sArena.map.data['width']);
+			var finishy = Math.min((y + core.can.height) / 40 + 1.5 | 0, sArena.map.data['height']);
 
-			var perRow = this.data.tilesets[0].imagewidth / this.data.tilewidth;
+			var perRow = sArena.map.data['tilesets'][0]['imagewidth'] / sArena.map.data['tilewidth'];
 			
 			for(var ix = startx; ix < finishx; ix++)
 			{
@@ -196,11 +202,11 @@ var sArena =
 				{
 					for(var l = 0; l < 2; l++)
 					{
-						var tmp = this.data.layers[l].data[ix + (iy * this.data.height)] - 1;
+						var tmp = sArena.map.data['layers'][l]['data'][ix + (iy * sArena.map.data['height'])] - 1;
 						if(tmp >= 0)
 						{
-							var px = ((tmp % perRow) | 0) * this.data.tilewidth;
-							var py = ((tmp / perRow) | 0) * this.data.tileheight;
+							var px = ((tmp % perRow) | 0) * sArena.map.data['tilewidth'];
+							var py = ((tmp / perRow) | 0) * sArena.map.data['tileheight'];
 							core.drawImage(sArena.sprites[0], px, py, ix * 40 - x, iy * 40 - y, 40, 40);
 						}
 					}
@@ -210,8 +216,8 @@ var sArena =
 
 		drawHeroes: function(x, y)
 		{
-			for(var i = 0; i < this.objects.heroes.length; i++)
-				this.objects.heroes[i].draw(x, y + 10);
+			for(var i = 0; i < sArena.map.objects.heroes.length; i++)
+				sArena.map.objects.heroes[i].draw(x, y + 10);
 		}
 	}
 };

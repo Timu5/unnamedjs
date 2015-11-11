@@ -29,10 +29,6 @@ function a_star(start, destination, board, columns, rows, allow_diagonals)
 	var open = []; //List of open nodes (nodes to be inspected)
 	var closed = []; //List of closed nodes (nodes we've already inspected)
 
-	var g = 0; //Cost from start to current node
-	var h = heuristic(start, destination); //Cost from current node to destination
-	var f = g+h; //Cost from start to destination going through the current node
-
 	//Push the start node onto the list of open nodes
 	open.push(start); 
 	var counter  = 0;
@@ -82,15 +78,15 @@ function a_star(start, destination, board, columns, rows, allow_diagonals)
 		closed.push(current_node);
 
 		//Expand our current node (look in all 8 directions)
-		for (var new_node_x = Math.max(0, current_node.x-1); new_node_x <= Math.min(columns-1, current_node.x+1); new_node_x++)
-			for (var new_node_y = Math.max(0, current_node.y-1); new_node_y <= Math.min(rows-1, current_node.y+1); new_node_y++)
+		for (var new_node_x = Math.max(0, current_node.x - 1); new_node_x <= Math.min(columns - 1, current_node.x + 1); new_node_x++)
+			for (var new_node_y = Math.max(0, current_node.y - 1); new_node_y <= Math.min(rows - 1, current_node.y + 1); new_node_y++)
 			{
 				if (!allow_diagonals)
 				{
 					if (new_node_x != current_node.x && new_node_y != current_node.y)
 						continue;
 				}
-				if (board[new_node_x +(new_node_y*columns)] == 0 //If the new node is open
+				if (board[new_node_x + (new_node_y * columns)] == 0 //If the new node is open
 					|| (destination.x == new_node_x && destination.y == new_node_y)) //or the new node is our destination
 				{
 					//See if the node is already in our closed list. If so, skip it.
@@ -116,7 +112,7 @@ function a_star(start, destination, board, columns, rows, allow_diagonals)
 
 					if (!found_in_open)
 					{
-						var new_node = new node(new_node_x, new_node_y, closed.length-1, -1, -1, -1);
+						var new_node = new node(new_node_x, new_node_y, closed.length - 1, -1, -1, -1);
 
 						new_node.g = current_node.g + Math.floor(Math.sqrt(Math.pow(new_node.x-current_node.x, 2)+Math.pow(new_node.y-current_node.y, 2)));
 						new_node.h = heuristic(new_node, destination);
@@ -137,9 +133,9 @@ function heuristic(current_node, destination)
 {
 	//Find the straight-line distance between the current node and the destination. (Thanks to id for the improvement)
 	//return Math.floor(Math.sqrt(Math.pow(current_node.x-destination.x, 2)+Math.pow(current_node.y-destination.y, 2)));
-	var x = current_node.x-destination.x;
-	var y = current_node.y-destination.y;
-	return x*x+y*y;
+	var x = current_node.x - destination.x;
+	var y = current_node.y - destination.y;
+	return x * x + y * y;
 }
 
 
