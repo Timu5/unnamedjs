@@ -100,3 +100,30 @@ body {
 	bottom: 0px;
 	right: 0px;
 }
+
+#loginBox {
+	position: absolute;
+	z-index: 2;
+	left: 0px;
+	right: 0px;
+	margin: 0 auto;
+	width: 300px;
+	height: 500px;
+	background: rgba(255,255,255,0.6);
+}
+
+#loginBox ul {
+	list-style-type: none;
+	margin: 120px 0px;
+	padding: 0;
+	width: 100%;
+}
+
+#loginBox ul li {
+	margin: 10px 80px;
+}
+
+#loginBox button {
+	margin: 0px 40px;
+}
+

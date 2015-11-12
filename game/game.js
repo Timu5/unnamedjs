@@ -13,10 +13,11 @@ var sLoad =
 		assets.queueImage('assets/hero.png');
 		assets.queueImage('assets/cursor.png');
 		//assets.queueAudio('assets/bg.ogg');
-		assets.queueUI('ui/arena.html');// xmlhttprequest is poor writen shit, and brake my whole code :(
+		assets.queueUI('ui/arena.html');
+		assets.queueUI('ui/login.html');
 		assets.queueJSON('assets/map.json');
 
-		assets.downloadAll( () => core.setState(sArena) );
+		assets.downloadAll( () => core.setState(sLogin) );
 	},
 
 	update: function(time) { },
@@ -43,6 +44,31 @@ var sLoad =
 	message: function() { }
 }
 
+var sLogin =
+{
+	init: function()
+	{
+		$('UI').innerHTML = assets.getAsset('ui/login.html');
+		$('buttonLogin').onclick = () => socket.send('/login ' + $('usermail').value + ' ' + $('password').value);
+		
+		socket.init("ws://localhost:80/");
+	},
+
+	update: function(time) { },
+
+	draw: function()
+	{
+		core.ctx.clearRect(0, 0, core.can.width, core.can.height);
+	},
+
+	click: function() { },
+	keyPress: function() { },
+	message: function(e)
+	{
+		if(e.data == '/OK') core.setState(sArena);
+	}
+}
+
 var sArena =
 {
 	sprites: [],
@@ -57,45 +83,42 @@ var sArena =
 		sArena.sprites[0] = assets.getAsset('assets/wild.png');
 		sArena.sprites[1] = assets.getAsset('assets/hero.png');
 		sArena.sprites[2] = assets.getAsset('assets/cursor.png');
-		sArena.map.data	= assets.getAsset('assets/map.json');
+		sArena.map.data	  = assets.getAsset('assets/map.json');
 		$('UI').innerHTML = assets.getAsset('ui/arena.html');
 
 		sArena.hero = new Hero('Hero1', 20, 20);
 		sArena.map.objects.heroes.push(sArena.hero); // Add our hero to map objects
-		
-		socket.init("ws://localhost:80/");
 	},
 
 	update: function(time)
 	{
-		/*if(input.mouseX < 20 && sArena.pos[0] > - core.can.width / 2)
-		{
-			sArena.pos[0] -= (time * 0.2);
-			sArena.lock = false;
-		}
-		
-		if(input.mouseX > (core.can.width - 20) && sArena.pos[0] < (sArena.map.data['width'] * sArena.map.data['tilewidth']) - core.can.width / 2)
-		{
-			sArena.pos[0] += (time * 0.2);
-			sArena.lock = false;
-		}
-
-		if(input.mouseY < 20 && sArena.pos[1] > - core.can.height / 2)
-		{
-			sArena.pos[1] -= (time * 0.2);
-			sArena.lock = false;
-		}
-
-		if(input.mouseY > (core.can.height - 20) && sArena.pos[1] < (sArena.map.data['height'] * sArena.map.data['tileheight']) - core.can.height / 2)
-		{
-			sArena.pos[1] += (time * 0.2);
-			sArena.lock = false;
-		}*/
-
 		if(sArena.lock)
 		{
 			sArena.pos[0] = sArena.hero.realX - core.can.width / 2;
 			sArena.pos[1] = sArena.hero.realY - core.can.height / 2;
+		}
+		else
+		{
+			if(input.mouseX < 20 && sArena.pos[0] > - core.can.width / 2)
+			{
+				sArena.pos[0] -= (time * 0.2);
+				sArena.lock = false;
+			}
+			else if(input.mouseX > (core.can.width - 20) && sArena.pos[0] < (sArena.map.data['width'] * sArena.map.data['tilewidth']) - core.can.width / 2)
+			{
+				sArena.pos[0] += (time * 0.2);
+				sArena.lock = false;
+			}
+			else if(input.mouseY < 20 && sArena.pos[1] > - core.can.height / 2)
+			{
+				sArena.pos[1] -= (time * 0.2);
+				sArena.lock = false;
+			}
+			else if(input.mouseY > (core.can.height - 20) && sArena.pos[1] < (sArena.map.data['height'] * sArena.map.data['tileheight']) - core.can.height / 2)
+			{
+				sArena.pos[1] += (time * 0.2);
+				sArena.lock = false;
+			}
 		}
 
 		for(var i = 0; i < sArena.map.objects.heroes.length; i++)
@@ -107,7 +130,7 @@ var sArena =
 			var x = sArena.path[sArena.pathptr].x - sArena.hero.posX;
 			var y = sArena.path[sArena.pathptr].y - sArena.hero.posY;
 			sArena.hero.move(x, y);
-			socket.send("/move "+sArena.path[sArena.pathptr].x+" "+sArena.path[sArena.pathptr].y);
+			socket.send("/move " + sArena.path[sArena.pathptr].x + " " + sArena.path[sArena.pathptr].y);
 		}
 	},
 
@@ -146,47 +169,45 @@ var sArena =
 
 	keyPress: function(keycode)
 	{
-		if(keycode == 13) // ENTER
+		switch(keycode)
 		{
-			if(document.activeElement.id == 'chatInput')
-			{
-				socket.send(document.activeElement.value);
-				document.activeElement.value = '';
-			}
-			else if(document.activeElement.id == 'cinput')
-			{
-				eval(document.activeElement.value);
-				document.activeElement.value = "";
-			}
-		}
-		if(keycode == 82) // "r" center camera at player coords
-		{
-			sArena.lock = true;
-		}
-		else if(keycode == 192) // "`" show/hide console
-		{
-			var cinput = $('cinput');
-			if(sArena.consoleVisible == 0)
-			{
-				$('console').style.visibility = 'visible';
-				cinput.focus();
-				cinput.value = '';
-				sArena.consoleVisible = 1;
-			}
-			else
-			{
-				$('console').style.visibility = 'hidden';
-				cinput.blur();
-				sArena.consoleVisible = 0;
-			}
-		}
-		else if(keycode == 115) // F4 fullscreen on/off
-		{
-			core.fullscreen();
-		}
-		else if(keycode == 67) // "c" switch to chat
-		{
-			$('chatInput').focus();
+			case 13: // ENTER
+				if(document.activeElement.id == 'chatInput')
+				{
+					socket.send(document.activeElement.value);
+					document.activeElement.value = '';
+				}
+				else if(document.activeElement.id == 'cinput')
+				{
+					eval(document.activeElement.value);
+					document.activeElement.value = "";
+				}
+				break;
+			case 82: // "r" center camera at player coords
+				sArena.lock = !sArena.lock;
+				break;
+			case 192: // "`" show/hide console
+				var cinput = $('cinput');
+				if(sArena.consoleVisible == 0)
+				{
+					$('console').style.visibility = 'visible';
+					cinput.focus();
+					cinput.value = '';
+					sArena.consoleVisible = 1;
+				}
+				else
+				{
+					$('console').style.visibility = 'hidden';
+					cinput.blur();
+					sArena.consoleVisible = 0;
+				}
+				break;
+			case 115: // F4 fullscreen on/off
+				core.fullscreen();
+				break;
+			case 67: // "c" switch to chat
+				$('chatInput').focus();
+				break;
 		}
 	},
 
