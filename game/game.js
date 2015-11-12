@@ -7,10 +7,13 @@ var sLoad =
 {
 	init: function()
 	{
+		$('UI').innerHTML = '';
+
 		assets.queueImage('assets/wild.png');
 		assets.queueImage('assets/hero.png');
 		assets.queueImage('assets/cursor.png');
 		//assets.queueAudio('assets/bg.ogg');
+		assets.queueUI('ui/arena.html');// xmlhttprequest is poor writen shit, and brake my whole code :(
 		assets.queueJSON('assets/map.json');
 
 		assets.downloadAll( () => core.setState(sArena) );
@@ -37,7 +40,6 @@ var sLoad =
 
 	click: function() { },
 	keyPress: function() { },
-	
 	message: function() { }
 }
 
@@ -56,14 +58,17 @@ var sArena =
 		sArena.sprites[1] = assets.getAsset('assets/hero.png');
 		sArena.sprites[2] = assets.getAsset('assets/cursor.png');
 		sArena.map.data	= assets.getAsset('assets/map.json');
+		$('UI').innerHTML = assets.getAsset('ui/arena.html');
 
-		sArena.hero = new Hero('Hero1', 20, 10);
+		sArena.hero = new Hero('Hero1', 20, 20);
 		sArena.map.objects.heroes.push(sArena.hero); // Add our hero to map objects
+		
+		socket.init("ws://localhost:80/");
 	},
 
 	update: function(time)
 	{
-		if(input.mouseX < 20 && sArena.pos[0] > - core.can.width / 2)
+		/*if(input.mouseX < 20 && sArena.pos[0] > - core.can.width / 2)
 		{
 			sArena.pos[0] -= (time * 0.2);
 			sArena.lock = false;
@@ -81,11 +86,11 @@ var sArena =
 			sArena.lock = false;
 		}
 
-		if(input.mouseY > (core.can.height - 20) && sArena.pos[1] < (sArena.map.data['height'] * sArena.map.data['height']) - core.can.height / 2)
+		if(input.mouseY > (core.can.height - 20) && sArena.pos[1] < (sArena.map.data['height'] * sArena.map.data['tileheight']) - core.can.height / 2)
 		{
 			sArena.pos[1] += (time * 0.2);
 			sArena.lock = false;
-		}
+		}*/
 
 		if(sArena.lock)
 		{
@@ -102,6 +107,7 @@ var sArena =
 			var x = sArena.path[sArena.pathptr].x - sArena.hero.posX;
 			var y = sArena.path[sArena.pathptr].y - sArena.hero.posY;
 			sArena.hero.move(x, y);
+			socket.send("/move "+sArena.path[sArena.pathptr].x+" "+sArena.path[sArena.pathptr].y);
 		}
 	},
 
@@ -140,6 +146,19 @@ var sArena =
 
 	keyPress: function(keycode)
 	{
+		if(keycode == 13) // ENTER
+		{
+			if(document.activeElement.id == 'chatInput')
+			{
+				socket.send(document.activeElement.value);
+				document.activeElement.value = '';
+			}
+			else if(document.activeElement.id == 'cinput')
+			{
+				eval(document.activeElement.value);
+				document.activeElement.value = "";
+			}
+		}
 		if(keycode == 82) // "r" center camera at player coords
 		{
 			sArena.lock = true;
@@ -153,33 +172,47 @@ var sArena =
 				cinput.focus();
 				cinput.value = '';
 				sArena.consoleVisible = 1;
-
-				cinput.onkeyup = function(e)
-				{
-					if(e.keyCode == 13)
-					{
-						eval(cinput.value);
-						cinput.value = "";
-					}
-				};
 			}
 			else
 			{
 				$('console').style.visibility = 'hidden';
 				cinput.blur();
-				cinput.onkeyup = null;
 				sArena.consoleVisible = 0;
 			}
 		}
-		else if(keycode == 115)// F4 fullscreen on/off
+		else if(keycode == 115) // F4 fullscreen on/off
 		{
 			core.fullscreen();
+		}
+		else if(keycode == 67) // "c" switch to chat
+		{
+			$('chatInput').focus();
 		}
 	},
 
 	message: function(e)
 	{
-		log("Server message: " + e.data);
+		if(e.data.startsWith('/'))
+		{
+			var args = e.data.split(' ');
+			switch(args[0])
+			{
+				case '/new':
+					sArena.map.objects.heroes.push(new Hero(args[1], parseInt(args[2]), parseInt(args[3])));
+					break;
+				case '/move':
+					var h = sArena.map.objects.heroes.filter(function(obj) { return obj.name == args[1]; })[0];
+					if(h == undefined)
+						sArena.map.objects.heroes.push(new Hero(args[1], parseInt(args[2]), parseInt(args[3])));
+					else
+						h.move(parseInt(args[2]) - h.posX, parseInt(args[3]) - h.posY);
+					break;
+			}
+		}
+		else
+		{
+			$('chat').innerHTML += e.data + '<br />';
+		}
 	},
 
 	map:

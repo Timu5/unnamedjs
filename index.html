@@ -9,19 +9,22 @@
 		<canvas id="canvas">Your browser doesn't support canvas element!</canvas>
 
 		<!-- UI -->
+		<div id="UI">
 			<div id="console"><div id="log"></div><input class="tinput" id="cinput" type="text"/></div>
 			<div id="keyInd">KeyCode</div>
 
 			<!--<div id="health"></div>-->
-			<div id="chat"><font color="red">Admin</font>: Fake message from admin!<input class="tinput" id="chatInput" type="text"/></div>
+			<div id="chat"><!--<font color="red">Admin</font>: Fake message from admin!--><input class="tinput" id="chatInput" type="text"/></div>
 			<!--<div id="minimap">Tu bedzie minimapka!</div>-->
-			<div id="uitest"></div>
+			<!--<div id="uitest"></div>-->
+		</div>
 		<!-- UI END -->
 
 		<!-- JS -->
 			<script src="game/game.js"></script>
 			<script src="game/hero.js"></script>
 			<script src="engine/astar.js"></script>
+			<script src="engine/socket.js"></script>
 			<script src="engine/input.js"></script>
 			<script src="engine/assets.js"></script>
 			<script src="engine/core.js"></script>

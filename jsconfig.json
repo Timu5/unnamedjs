@@ -8,6 +8,7 @@
 		"engine/astar.js",
 		"engine/core.js",
 		"engine/input.js",
+		"engine/socket.js",
 		"game/game.js",
 		"game/hero.js"
 	]

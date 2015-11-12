@@ -13,6 +13,7 @@ var assets =
 	queueImage: function(filepath) { assets.downloadQueue.push( { type: "img",   path: filepath } ); },
 	queueAudio: function(filepath) { assets.downloadQueue.push( { type: "audio", path: filepath } ); },
 	queueJSON:  function(filepath) { assets.downloadQueue.push( { type: "json",  path: filepath } ); },
+	queueUI:    function(filepath) { assets.downloadQueue.push( { type: "ui",    path: filepath } ); },
 
 	callback: function(){},
 
@@ -55,23 +56,57 @@ var assets =
 				audio.src = path;
 				assets.cache[path] = audio;
 			}
-			else // JSON
+			else if(assets.downloadQueue[i].type == "json")
 			{
 				var req = new XMLHttpRequest();
 				req.open("GET", path, true);
 				req.overrideMimeType("application/json");
 				var that = assets;
 
-				req.onreadystatechange = function()
+				req.onreadystatechange = function(p)
 				{
 					if(req.readyState == 4)
 					{
-						that.cache[path] = JSON.parse(req.responseText);
-						assets._success();
+						if(req.status == 200)
+						{
+							that.cache[path] = JSON.parse(req.responseText);
+							assets._success();
+						}
+						else
+						{
+							assets._error();
+						}
 					}
+
 				}
 				req.onerror = assets._error;
 				req.send(null);
+			}
+			else if(assets.downloadQueue[i].type == "ui")
+			{
+				var req2 = new XMLHttpRequest();
+				req2.open("GET", path, true);
+				req2.overrideMimeType("text/plain");
+				var that2 = assets;
+
+				req2.onreadystatechange = function()
+				{
+					if(req2.readyState == 4)
+					{
+						if(req2.status == 200)
+						{
+							that2.cache[path] = req2.responseText;
+							assets._success();
+						}
+						else
+						{
+							assets._error();
+						}
+					}
+
+				}
+				req2.onerror = assets._error;
+				req2.send(null);
 			}
 		}
 	},

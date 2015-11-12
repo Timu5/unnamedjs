@@ -20,6 +20,7 @@ function Hero(heroname, posx, posy)
 
 Hero.prototype.rotate = function(x, y)//int value from -1 to 1
 {
+	if(x == 0 && y == 0) return;
 	var tmp = ((y + 1) * 3) + (x + 1) | 0;
 
 	switch(tmp)
